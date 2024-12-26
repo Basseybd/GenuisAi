@@ -90,7 +90,7 @@ Key highlights of this repository include:
    cd genius-ai
    ```
 
-````
+
 
 2. **Install dependencies**:
 
@@ -157,4 +157,3 @@ npm run dev
 This project is licensed under the [MIT License](LICENSE). You are free to use and modify this software according to the terms of the license.
 
 ---
-````
