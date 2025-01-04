@@ -1,9 +1,9 @@
 "use client";
 
 import * as z from "zod";
-import { formSchema } from "./constants"; // Adjust to where your formSchema is located
+import { formSchema } from "./constants";
 import Heading from "@/components/heading";
-import { MessageSquare } from "lucide-react";
+import { Music } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -14,19 +14,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
 
-interface ChatMessage {
-  role: "system" | "user" | "assistant" | "function";
-  content: string;
-}
-
-const ConversationPage = () => {
+const MusicPage = () => {
   const router = useRouter();
-
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [music, setMusic] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,25 +28,16 @@ const ConversationPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatMessage = {
-        role: "user",
-        content: values.prompt,
-      };
+      setMusic(undefined);
 
-      const newMessages = [...messages, userMessage];
+      const response = await axios.post("/api/music", values);
 
-      const response = await axios.post("/api/conversation", {
-        messages: newMessages,
-      });
+      console.log("API response:", response.data);
+      setMusic(response.data.audio);
 
-      setMessages((current) => [
-        ...current,
-        userMessage,
-        response.data as ChatMessage,
-      ]);
       form.reset();
     } catch (error) {
-      console.error(error);
+      console.error("Error generating music:", error);
     } finally {
       router.refresh();
     }
@@ -64,11 +46,11 @@ const ConversationPage = () => {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="Chat with our most advanced conversation model."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Music"
+        description="Wanna hear some tunes, generate a 15 sec track!"
+        icon={Music}
+        iconColor="text-emerald-500"
+        bgColor="bg-emerald-500/10"
       />
 
       <div className="px-4 lg:px-8">
@@ -120,31 +102,16 @@ const ConversationPage = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
-            <div>
-              <Empty label="No conversation started." />
-            </div>
+          {!music && !isLoading && <Empty label="No Music Generated." />}
+          {music && (
+            <audio controls className="w-full mt-8">
+              <source src={music} type="audio/mp3" />
+            </audio>
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  msg.role === "user"
-                    ? "bg-white border border-black/10"
-                    : "bg-muted"
-                )}
-              >
-                {msg.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">{msg.content}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ConversationPage;
+export default MusicPage;
