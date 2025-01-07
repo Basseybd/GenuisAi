@@ -1,6 +1,6 @@
 # Genius AI
 
-Welcome to **Genius AI**—a SaaS platform designed to showcase cutting-edge AI features built on top of the latest **Next.js 13** App Router. This repository combines powerful modern web technologies such as **React**, **Tailwind**, **Prisma**, **MySQL**, **Clerk**, **Stripe**, **shadcn** components, and **Replicate**-powered endpoints to deliver a smooth developer experience and a seamless subscription-based solution for your end-users.
+Welcome to **Genius AI**—a SaaS platform designed to showcase cutting-edge AI features built on top of the latest **Next.js 13** App Router. This repository combines powerful modern web technologies such as **React**, **Tailwind**, **Prisma**, **Supabase**, **Clerk**, **Stripe**, **shadcn** components, and **Replicate**-powered endpoints to deliver a smooth developer experience and a seamless subscription-based solution for your end-users.
 
 ---
 
@@ -18,14 +18,14 @@ Welcome to **Genius AI**—a SaaS platform designed to showcase cutting-edge AI 
 
 ## Overview
 
-**Genius AI** is a SaaS application built using Next.js 13’s **App Router**, which simplifies and optimizes routing within React applications. By leveraging tools like **Stripe** for subscription handling, **Clerk** for robust authentication, **Prisma** for database interactions, and **Replicate** for AI tasks (such as music or video generation), this project demonstrates a streamlined and scalable approach to building AI-driven web applications.
+**Genius AI** is a SaaS application built using Next.js 13’s **App Router**, which simplifies and optimizes routing within React applications. By leveraging tools like **Stripe** for subscription handling, **Clerk** for robust authentication, **Prisma** for database interactions, **Supabase** as a PostgreSQL provider, and **Replicate** for AI tasks (such as music or video generation), this project demonstrates a streamlined and scalable approach to building AI-driven web applications.
 
 Key highlights of this repository include:
 
 - **AI Endpoints**: Integration with [Replicate](https://replicate.com/) for advanced AI tasks (e.g., music generation, video generation, etc.).
 - **Subscription Management**: Integrated **Stripe** billing for seamless subscription flows.
 - **Authentication**: **Clerk** handles user sign-ups, logins, password resets, etc.
-- **Database ORM**: **Prisma** with MySQL for type-safe, clean database interactions.
+- **Database ORM**: **Prisma** with **Supabase (PostgreSQL)** for type-safe, clean database interactions.
 - **shadcn components**: Flexible React component library for accessible, modern UIs.
 - **Tailwind CSS**: Utility-first and customizable styling approach.
 
@@ -40,7 +40,7 @@ Key highlights of this repository include:
 2. **Replicate AI Integrations**
 
    - **Music Generation**: Uses Replicate’s [MusicGen](https://replicate.com/meta/musicgen) endpoint for prompt-based audio.
-   - **Video Generation** (coming soon or example included): Leverage Replicate’s [video-01](https://replicate.com/minimax/video-01) for generating short video clips.
+   - **Video Generation**: Leverages Replicate’s [video-01](https://replicate.com/minimax/video-01) for generating short video clips.
 
 3. **Subscription & Payments**
 
@@ -55,12 +55,11 @@ Key highlights of this repository include:
    - **Tailwind CSS** ensures styles are responsive and consistent across all screen sizes.
    - **shadcn** UI library for reusable, accessible, and themeable components.
 
-6. **Prisma ORM**
+6. **Prisma ORM with Supabase PostgreSQL**
 
-   - A type-safe database layer with maintainable data models using **Prisma**.
+   - A type-safe database layer using **Prisma** and **Supabase** for PostgreSQL database management.
 
-7. **Scalable Database**
-   - Connect to a **MySQL** instance for production-ready scalability.
+7. **Auto-Scrolling Carousel**: Added an animated, responsive **carousel** to display technologies used in the app.
 
 ---
 
@@ -71,7 +70,7 @@ Key highlights of this repository include:
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
 - **Auth**: [Clerk](https://clerk.dev/)
 - **ORM**: [Prisma](https://www.prisma.io/)
-- **Database**: MySQL
+- **Database**: [Supabase (PostgreSQL)](https://supabase.com/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **AI Integrations**: [Replicate](https://replicate.com/) (MusicGen, Video-01, etc.)
 - **Deployment**: [Vercel](https://vercel.com/) or other hosting platforms
@@ -84,7 +83,7 @@ Key highlights of this repository include:
 
 - **Node.js** (version 16+ recommended)
 - **npm** or **yarn** (latest version recommended)
-- A **MySQL** database (local or remote)
+- A **Supabase PostgreSQL** database
 - A **Clerk** account for authentication
 - A **Stripe** account for payment integration
 - A **Replicate** account (for advanced AI features)
@@ -111,7 +110,7 @@ Key highlights of this repository include:
 3. **Configure environment variables** (see [Configuration](#configuration)).
 
 4. **Database Setup**  
-   Update your `DATABASE_URL` in the `.env` file to point to your MySQL instance.
+   Update your `DATABASE_URL` in the `.env` file to point to your Supabase PostgreSQL instance.
 
 5. **Run database migrations**:
 
@@ -134,8 +133,9 @@ Key highlights of this repository include:
 Create a `.env` file at the root (or use `.env.local` depending on your environment) and fill in your credentials. An example:
 
 ```plaintext
-# MySQL database URL
-DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+# Supabase PostgreSQL URL
+DATABASE_URL="postgresql://USER:PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
+DIRECT_URL="postgresql://USER:PASSWORD@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
 
 # Stripe API keys
 STRIPE_SECRET_KEY="sk_test_xxx"
@@ -163,11 +163,21 @@ After your server is running:
 - **Stripe Subscription**: Test with your Stripe test keys to confirm checkout flows.
 - **AI Endpoints**:
   - **Music Generation**:
-    - Example route: `POST /api/music` with JSON body `{ "prompt": "Your text prompt" }`.
-    - Uses Replicate’s MusicGen model to generate short audio clips.
-  - **Video Generation (optional)**:
-    - Potential route: `POST /api/video` with JSON body `{ "prompt": "Your video prompt" }`.
-    - Calls Replicate’s **video-01** endpoint to generate a short 6-second video clip.
+    - Endpoint: `POST /api/music`
+    - Example JSON body:
+      ```json
+      {
+        "prompt": "Generate an upbeat music track for a social post."
+      }
+      ```
+  - **Video Generation**:
+    - Endpoint: `POST /api/video`
+    - Example JSON body:
+      ```json
+      {
+        "prompt": "A cinematic video of a serene beach at sunset."
+      }
+      ```
 
 **Note** that advanced AI tasks (e.g., MusicGen, video-01) might require **polling** or **webhooks** to get final outputs (MP3/MP4). By default, Replicate can take a few seconds to finish generating the file.
 
