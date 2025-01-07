@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-// Already existing icons
 import {
   SiReact,
   SiNextdotjs,

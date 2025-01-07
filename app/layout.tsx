@@ -20,15 +20,13 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignOutUrl="/">
       <html lang="en">
-        <body>
-          <head>
-            <link rel="icon" href="/favicon.ico" />
-          </head>
-          <main className={`h-full ${inter.className}`}>
-            <ModalProvider />
-            <ToasterProvider />
-            {children}
-          </main>
+        <head>
+          <link rel="icon" href="/logo.png" />
+        </head>
+        <body className={`h-full ${inter.className}`}>
+          <ModalProvider />
+          <ToasterProvider />
+          <main className="h-full">{children}</main>
         </body>
       </html>
     </ClerkProvider>
