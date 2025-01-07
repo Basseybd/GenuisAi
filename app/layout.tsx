@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
+import ModalProvider from "@/components/modal-provider";
+import ToasterProvider from "@/components/toaster-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +21,14 @@ export default function RootLayout({
     <ClerkProvider afterSignOutUrl="/">
       <html lang="en">
         <body>
-          <header></header>
-          <main className={inter.className}>{children}</main>
+          <head>
+            <link rel="icon" href="/favicon.ico" />
+          </head>
+          <main className={`h-full ${inter.className}`}>
+            <ModalProvider />
+            <ToasterProvider />
+            {children}
+          </main>
         </body>
       </html>
     </ClerkProvider>

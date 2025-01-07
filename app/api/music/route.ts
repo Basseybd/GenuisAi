@@ -2,6 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 
+import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
 });
@@ -34,6 +37,12 @@ export async function POST(req: Request) {
       classifier_free_guidance: 3,
     };
 
+    const freeTrial = await checkApiLimit();
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro)
+      return new NextResponse("Free Trial Has Expired", { status: 403 });
+
     // Create a prediction (which starts the generation)
     let prediction = await replicate.predictions.create({
       // "version" is the actual MusicGen version ID
@@ -54,6 +63,8 @@ export async function POST(req: Request) {
       // Refresh prediction state
       prediction = await replicate.predictions.get(prediction.id!);
     }
+
+    if (!isPro) await increaseApiLimit();
 
     if (prediction.status === "succeeded") {
       // "prediction.output" should be a direct .mp3 URL
